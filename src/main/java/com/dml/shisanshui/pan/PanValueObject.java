@@ -5,8 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.dml.puke.pai.PaiListValueObject;
-import com.dml.puke.wanfa.position.Position;
+import javax.swing.text.Position;
+
+import com.dml.shisanshui.pai.PaiListValueObject;
 import com.dml.shisanshui.player.ShisanshuiPlayerValueObject;
 
 public class PanValueObject {

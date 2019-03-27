@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import com.dml.puke.pai.PukePai;
 import com.dml.shisanshui.ju.Ju;
+import com.dml.shisanshui.pai.PukePai;
 import com.dml.shisanshui.pan.Pan;
 
 /**

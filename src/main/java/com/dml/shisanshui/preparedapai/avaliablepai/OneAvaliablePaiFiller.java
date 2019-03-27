@@ -3,9 +3,9 @@ package com.dml.shisanshui.preparedapai.avaliablepai;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dml.puke.pai.PukePai;
-import com.dml.puke.pai.PukePaiMian;
 import com.dml.shisanshui.ju.Ju;
+import com.dml.shisanshui.pai.PukePai;
+import com.dml.shisanshui.pai.PukePaiMian;
 
 /**
  * 最普通的一副牌

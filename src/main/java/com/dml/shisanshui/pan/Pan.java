@@ -5,8 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.dml.puke.pai.PukePai;
-import com.dml.puke.wanfa.position.Position;
+import javax.swing.text.Position;
+
+import com.dml.shisanshui.pai.PukePai;
 import com.dml.shisanshui.pai.paixing.PaixingSolution;
 import com.dml.shisanshui.player.PlayerNotFoundException;
 import com.dml.shisanshui.player.ShisanshuiPlayer;

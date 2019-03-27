@@ -1,13 +1,12 @@
 package com.dml.shisanshui.pai.paixing;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
-import com.dml.puke.pai.DianShu;
-import com.dml.puke.pai.HuaSe;
-import com.dml.puke.pai.PukePai;
+import com.dml.shisanshui.pai.DianShu;
+import com.dml.shisanshui.pai.HuaSe;
+import com.dml.shisanshui.pai.PukePai;
 import com.dml.shisanshui.pai.wanfa.BianXingWanFa;
 
 /**
@@ -20,12 +19,40 @@ public class Dun {
 
 	private Paixing paixing;
 
-	private Set<PukePai> pukePaiSet = new HashSet<>();
+	private List<PukePai> pukePaiList = new ArrayList<>();
+
+	private int size;
+
+	private void sortedPukePai() {
+		LinkedList<PukePai> sortedList = new LinkedList<>();
+		for (PukePai pukePai : pukePaiList) {
+			if (sortedList.isEmpty()) {
+				sortedList.add(pukePai);
+			} else {
+				int length = sortedList.size();
+				int i = 0;
+				while (i < length) {
+					int compare = sortedList.get(i).getPaiMian().compareTo(pukePai.getPaiMian());
+					if (compare > 0) {
+						sortedList.add(i, pukePai);
+						break;
+					}
+					if (i == length - 1) {
+						sortedList.add(pukePai);
+					}
+					i++;
+				}
+			}
+		}
+		pukePaiList = new ArrayList<>(sortedList);
+	}
 
 	/**
 	 * 五枚（百变才有）＞一条龙＞同花顺>铁支>葫芦>同花>顺子>三条>两对>对子>乌龙.
 	 */
 	public void calculatePaixing(BianXingWanFa bx) {
+		size = pukePaiList.size();
+		sortedPukePai();
 		boolean tonghua = isTonghua();
 		boolean shunzi = isShunzi();
 		int wangpaiCount = countWangpai();
@@ -37,15 +64,15 @@ public class Dun {
 			paixing = Paixing.liangdui;
 		} else if (tongdianshuCount == 3) {
 			paixing = Paixing.santiao;
-		} else if (shunzi && !tonghua) {
+		} else if (shunzi && !tonghua && size == 5) {
 			paixing = Paixing.shunzi;
-		} else if (tonghua && !shunzi) {
+		} else if (tonghua && !shunzi && size == 5) {
 			paixing = Paixing.tonghua;
-		} else if (tongdianshuCount == 3 && duiziCount == 1) {
+		} else if (tongdianshuCount == 3 && duiziCount == 1 && size == 5) {
 			paixing = Paixing.hulu;
 		} else if (tongdianshuCount == 4) {
 			paixing = Paixing.tiezhi;
-		} else if (tonghua && shunzi) {
+		} else if (tonghua && shunzi && size == 5) {
 			paixing = Paixing.tonghuashun;
 		} else if (tongdianshuCount == 4 && wangpaiCount == 1 && bx.equals(BianXingWanFa.baibian)) {
 			paixing = Paixing.wumei;
@@ -55,17 +82,18 @@ public class Dun {
 	}
 
 	public boolean isShunzi() {
-		SortedMap<Integer, PukePai> map = new TreeMap<>();
-		for (PukePai pukePai : pukePaiSet) {
-			map.put(pukePai.getId(), pukePai);
-		}
 		DianShu dianshu = null;
-		for (PukePai pukePai : map.values()) {
+		for (PukePai pukePai : pukePaiList) {
 			DianShu newDianshu = pukePai.getPaiMian().dianShu();
+			// 2、3、4、5、A算顺子，2、3、4、K、A不算
 			if (dianshu == null || newDianshu.ordinal() - dianshu.ordinal() == 1) {
 				dianshu = newDianshu;
 			} else {
-				return false;
+				if (newDianshu.equals(DianShu.A) && dianshu.equals(DianShu.wu)) {
+					dianshu = newDianshu;
+				} else {
+					return false;
+				}
 			}
 		}
 		return true;
@@ -73,7 +101,7 @@ public class Dun {
 
 	public boolean isTonghua() {
 		HuaSe huase = null;
-		for (PukePai pukePai : pukePaiSet) {
+		for (PukePai pukePai : pukePaiList) {
 			HuaSe newHuase = pukePai.getPaiMian().huaSe();
 			if (newHuase == null) {
 				return false;
@@ -88,7 +116,7 @@ public class Dun {
 
 	public int countWangpai() {
 		int wangCount = 0;
-		for (PukePai pukePai : pukePaiSet) {
+		for (PukePai pukePai : pukePaiList) {
 			DianShu dianshu = pukePai.getPaiMian().dianShu();
 			if (dianshu.ordinal() > 12) {
 				wangCount++;
@@ -99,7 +127,7 @@ public class Dun {
 
 	public int countMaxTongdianshu() {
 		int[] dianshuAmountArray = new int[15];
-		for (PukePai pukePai : pukePaiSet) {
+		for (PukePai pukePai : pukePaiList) {
 			DianShu dianshu = pukePai.getPaiMian().dianShu();
 			dianshuAmountArray[dianshu.ordinal()]++;
 		}
@@ -114,7 +142,7 @@ public class Dun {
 
 	public int countDuizi() {
 		int[] dianshuAmountArray = new int[15];
-		for (PukePai pukePai : pukePaiSet) {
+		for (PukePai pukePai : pukePaiList) {
 			DianShu dianshu = pukePai.getPaiMian().dianShu();
 			dianshuAmountArray[dianshu.ordinal()]++;
 		}
@@ -135,12 +163,12 @@ public class Dun {
 		this.paixing = paixing;
 	}
 
-	public Set<PukePai> getPukePaiSet() {
-		return pukePaiSet;
+	public List<PukePai> getPukePaiList() {
+		return pukePaiList;
 	}
 
-	public void setPukePaiSet(Set<PukePai> pukePaiSet) {
-		this.pukePaiSet = pukePaiSet;
+	public void setPukePaiList(List<PukePai> pukePaiList) {
+		this.pukePaiList = pukePaiList;
 	}
 
 }

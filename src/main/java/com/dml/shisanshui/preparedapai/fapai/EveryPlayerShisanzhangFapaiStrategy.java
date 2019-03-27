@@ -3,8 +3,8 @@ package com.dml.shisanshui.preparedapai.fapai;
 import java.util.List;
 import java.util.Map;
 
-import com.dml.puke.pai.PukePai;
 import com.dml.shisanshui.ju.Ju;
+import com.dml.shisanshui.pai.PukePai;
 import com.dml.shisanshui.pan.Pan;
 import com.dml.shisanshui.player.ShisanshuiPlayer;
 

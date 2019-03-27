@@ -3,7 +3,7 @@ package com.dml.shisanshui.pai.paixing;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.dml.puke.pai.PukePai;
+import com.dml.shisanshui.pai.PukePai;
 
 /**
  * 用于比较的牌型方案
@@ -37,22 +37,36 @@ public class PaixingSolution {
 	 * 计算牌型索引，牌的id按从小到大的顺序拼接，小于10的左边补零
 	 */
 	public void calculateIndex() {
-		SortedMap<Integer, PukePai> map = new TreeMap<>();
-		for (PukePai pukePai : toudao.getPukePaiSet()) {
-			map.put(pukePai.getId(), pukePai);
-		}
-		for (PukePai pukePai : zhongdao.getPukePaiSet()) {
-			map.put(pukePai.getId(), pukePai);
-		}
-		for (PukePai pukePai : weidao.getPukePaiSet()) {
-			map.put(pukePai.getId(), pukePai);
-		}
 		StringBuilder sb = new StringBuilder();
-		for (Integer id : map.keySet()) {
-			if (id < 10) {
-				sb.append('0');
+		SortedMap<Integer, PukePai> map = new TreeMap<>();
+		for (PukePai pukePai : toudao.getPukePaiList()) {
+			map.put(pukePai.getId(), pukePai);
+			for (Integer id : map.keySet()) {
+				if (id < 10) {
+					sb.append('0');
+				}
+				sb.append(id);
 			}
-			sb.append(id);
+		}
+		map.clear();
+		for (PukePai pukePai : zhongdao.getPukePaiList()) {
+			map.put(pukePai.getId(), pukePai);
+			for (Integer id : map.keySet()) {
+				if (id < 10) {
+					sb.append('0');
+				}
+				sb.append(id);
+			}
+		}
+		map.clear();
+		for (PukePai pukePai : weidao.getPukePaiList()) {
+			map.put(pukePai.getId(), pukePai);
+			for (Integer id : map.keySet()) {
+				if (id < 10) {
+					sb.append('0');
+				}
+				sb.append(id);
+			}
 		}
 		paixingIndex = sb.toString();
 	}
@@ -62,13 +76,13 @@ public class PaixingSolution {
 	 */
 	public boolean isYitiaolong() {
 		int[] dianshuAmountArray = new int[15];
-		for (PukePai pukePai : toudao.getPukePaiSet()) {
+		for (PukePai pukePai : toudao.getPukePaiList()) {
 			dianshuAmountArray[pukePai.getPaiMian().dianShu().ordinal()]++;
 		}
-		for (PukePai pukePai : zhongdao.getPukePaiSet()) {
+		for (PukePai pukePai : zhongdao.getPukePaiList()) {
 			dianshuAmountArray[pukePai.getPaiMian().dianShu().ordinal()]++;
 		}
-		for (PukePai pukePai : weidao.getPukePaiSet()) {
+		for (PukePai pukePai : weidao.getPukePaiList()) {
 			dianshuAmountArray[pukePai.getPaiMian().dianShu().ordinal()]++;
 		}
 		for (int amount : dianshuAmountArray) {
