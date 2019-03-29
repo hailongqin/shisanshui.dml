@@ -15,6 +15,7 @@ import com.dml.shisanshui.player.action.ShisanshuiChupaiAction;
 import com.dml.shisanshui.preparedapai.avaliablepai.AvaliablePaiFiller;
 import com.dml.shisanshui.preparedapai.fapai.FapaiStrategy;
 import com.dml.shisanshui.preparedapai.lluanpai.LuanpaiStrategy;
+import com.dml.shisanshui.preparedapai.zuowei.ZuoweiDeterminer;
 
 public class Ju {
 	private Pan currentPan;
@@ -24,6 +25,7 @@ public class Ju {
 	private CurrentPanFinishiDeterminer currentPanFinishiDeterminer;
 	private JuFinishiDeterminer juFinishiDeterminer;
 
+	private ZuoweiDeterminer zuoweiDeterminer;
 	private AvaliablePaiFiller avaliablePaiFiller;
 	private LuanpaiStrategy luanpaiStrategyForFirstPan;
 	private LuanpaiStrategy luanpaiStrategyForNextPan;
@@ -86,6 +88,10 @@ public class Ju {
 		// 出牌提示
 		currentPan.generateChupaiPaixingSolutionsForTips(chupaiPaixingSolutionFilter);
 		currentPan.recordPanActionFrame(null, System.currentTimeMillis());
+	}
+
+	public void finish() {
+		juResult = juResultBuilder.buildJuResult(this);
 	}
 
 	public int countFinishedPan() {
@@ -210,6 +216,14 @@ public class Ju {
 
 	public void setJuResultBuilder(JuResultBuilder juResultBuilder) {
 		this.juResultBuilder = juResultBuilder;
+	}
+
+	public ZuoweiDeterminer getZuoweiDeterminer() {
+		return zuoweiDeterminer;
+	}
+
+	public void setZuoweiDeterminer(ZuoweiDeterminer zuoweiDeterminer) {
+		this.zuoweiDeterminer = zuoweiDeterminer;
 	}
 
 }

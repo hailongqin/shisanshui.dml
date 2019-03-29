@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.text.Position;
-
 import com.dml.shisanshui.pai.PukePai;
 import com.dml.shisanshui.pai.paixing.PaixingSolution;
 import com.dml.shisanshui.player.PlayerNotFoundException;
@@ -14,6 +12,7 @@ import com.dml.shisanshui.player.ShisanshuiPlayer;
 import com.dml.shisanshui.player.action.ChupaiPaixingSolutionCalculator;
 import com.dml.shisanshui.player.action.ChupaiPaixingSolutionFilter;
 import com.dml.shisanshui.player.action.ShisanshuiChupaiAction;
+import com.dml.shisanshui.position.Position;
 
 public class Pan {
 

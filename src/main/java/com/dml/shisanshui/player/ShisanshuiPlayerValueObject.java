@@ -5,10 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.text.Position;
-
 import com.dml.shisanshui.pai.PukePai;
 import com.dml.shisanshui.pai.paixing.PaixingSolution;
+import com.dml.shisanshui.position.Position;
 
 public class ShisanshuiPlayerValueObject {
 	private String id;
