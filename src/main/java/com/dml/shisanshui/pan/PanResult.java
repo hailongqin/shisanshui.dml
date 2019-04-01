@@ -10,4 +10,20 @@ public abstract class PanResult {
 		return pan.allPlayerIds();
 	}
 
+	public long getPanFinishTime() {
+		return panFinishTime;
+	}
+
+	public void setPanFinishTime(long panFinishTime) {
+		this.panFinishTime = panFinishTime;
+	}
+
+	public PanValueObject getPan() {
+		return pan;
+	}
+
+	public void setPan(PanValueObject pan) {
+		this.pan = pan;
+	}
+
 }

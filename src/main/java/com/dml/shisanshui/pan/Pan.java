@@ -71,6 +71,14 @@ public class Pan {
 		return action;
 	}
 
+	public PanActionFrame findLatestActionFrame() {
+		if (!actionFrameList.isEmpty()) {
+			return actionFrameList.get(actionFrameList.size() - 1);
+		} else {
+			return null;
+		}
+	}
+
 	public int getNo() {
 		return no;
 	}
