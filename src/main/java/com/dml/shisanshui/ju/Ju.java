@@ -5,11 +5,12 @@ import java.util.List;
 
 import com.dml.shisanshui.gameprocess.CurrentPanFinishiDeterminer;
 import com.dml.shisanshui.gameprocess.JuFinishiDeterminer;
+import com.dml.shisanshui.pai.paixing.comparator.DaoComparator;
 import com.dml.shisanshui.pan.CurrentPanResultBuilder;
 import com.dml.shisanshui.pan.Pan;
 import com.dml.shisanshui.pan.PanActionFrame;
 import com.dml.shisanshui.pan.PanResult;
-import com.dml.shisanshui.player.action.ChupaiPaixingSolutionCalculator;
+import com.dml.shisanshui.player.action.ChupaiDaoCalculator;
 import com.dml.shisanshui.player.action.ChupaiPaixingSolutionFilter;
 import com.dml.shisanshui.player.action.ShisanshuiChupaiAction;
 import com.dml.shisanshui.preparedapai.avaliablepai.AvaliablePaiFiller;
@@ -32,14 +33,18 @@ public class Ju {
 	private FapaiStrategy fapaiStrategyForFirstPan;
 	private FapaiStrategy fapaiStrategyForNextPan;
 
-	private ChupaiPaixingSolutionCalculator chupaiPaixingSolutionCalculator;
+	private DaoComparator daoComparator;
+
+	private ChupaiDaoCalculator chupaiDaoCalculator;
 	private ChupaiPaixingSolutionFilter chupaiPaixingSolutionFilter;
 
 	private CurrentPanResultBuilder currentPanResultBuilder;
 	private JuResultBuilder juResultBuilder;
 
-	public PanActionFrame chupai(String playerId, String paixingIndex, long actionTime) throws Exception {
-		ShisanshuiChupaiAction action = currentPan.chupai(playerId, paixingIndex);
+	public PanActionFrame chupai(String playerId, String toudaoIndex, String zhongdaoIndex, String weidaoIndex,
+			long actionTime) throws Exception {
+		ShisanshuiChupaiAction action = currentPan.chupai(playerId, toudaoIndex, zhongdaoIndex, weidaoIndex,
+				daoComparator);
 		if (currentPanFinishiDeterminer.determineToFinishCurrentPan(this)) {// 是否盘结束
 			PanResult panResult = currentPanResultBuilder.buildCurrentPanResult(this, actionTime);
 			finishedPanResultList.add(panResult);
@@ -65,7 +70,7 @@ public class Ju {
 		luanpaiStrategyForFirstPan.luanpai(this);
 		fapaiStrategyForFirstPan.fapai(this);
 		// 生成所有合理的出牌方案
-		currentPan.generateAllChupaiPaixingSolution(chupaiPaixingSolutionCalculator);
+		currentPan.generateAllChupaiPaixingSolution(chupaiDaoCalculator);
 		// 出牌提示
 		currentPan.generateChupaiPaixingSolutionsForTips(chupaiPaixingSolutionFilter);
 		return currentPan.recordPanActionFrame(null, startTime);
@@ -84,7 +89,7 @@ public class Ju {
 		luanpaiStrategyForNextPan.luanpai(this);
 		fapaiStrategyForNextPan.fapai(this);
 		// 生成所有合理的出牌方案
-		currentPan.generateAllChupaiPaixingSolution(chupaiPaixingSolutionCalculator);
+		currentPan.generateAllChupaiPaixingSolution(chupaiDaoCalculator);
 		// 出牌提示
 		currentPan.generateChupaiPaixingSolutionsForTips(chupaiPaixingSolutionFilter);
 		currentPan.recordPanActionFrame(null, System.currentTimeMillis());
@@ -186,12 +191,12 @@ public class Ju {
 		this.fapaiStrategyForNextPan = fapaiStrategyForNextPan;
 	}
 
-	public ChupaiPaixingSolutionCalculator getChupaiPaixingSolutionCalculator() {
-		return chupaiPaixingSolutionCalculator;
+	public ChupaiDaoCalculator getChupaiDaoCalculator() {
+		return chupaiDaoCalculator;
 	}
 
-	public void setChupaiPaixingSolutionCalculator(ChupaiPaixingSolutionCalculator chupaiPaixingSolutionCalculator) {
-		this.chupaiPaixingSolutionCalculator = chupaiPaixingSolutionCalculator;
+	public void setChupaiDaoCalculator(ChupaiDaoCalculator chupaiDaoCalculator) {
+		this.chupaiDaoCalculator = chupaiDaoCalculator;
 	}
 
 	public ChupaiPaixingSolutionFilter getChupaiPaixingSolutionFilter() {
@@ -224,6 +229,14 @@ public class Ju {
 
 	public void setZuoweiDeterminer(ZuoweiDeterminer zuoweiDeterminer) {
 		this.zuoweiDeterminer = zuoweiDeterminer;
+	}
+
+	public DaoComparator getDaoComparator() {
+		return daoComparator;
+	}
+
+	public void setDaoComparator(DaoComparator daoComparator) {
+		this.daoComparator = daoComparator;
 	}
 
 }

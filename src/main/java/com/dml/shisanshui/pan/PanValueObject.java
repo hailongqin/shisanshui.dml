@@ -36,6 +36,15 @@ public class PanValueObject {
 		return list;
 	}
 
+	public ShisanshuiPlayerValueObject findPlayer(String playerId) {
+		for (ShisanshuiPlayerValueObject player : playerList) {
+			if (player.getId().equals(playerId)) {
+				return player;
+			}
+		}
+		return null;
+	}
+
 	public int getNo() {
 		return no;
 	}

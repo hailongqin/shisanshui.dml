@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.dml.shisanshui.pai.PukePai;
+import com.dml.shisanshui.pai.paixing.Dao;
 import com.dml.shisanshui.pai.paixing.PaixingSolution;
+import com.dml.shisanshui.pai.paixing.comparator.DaoComparator;
 import com.dml.shisanshui.player.action.ChupaiException;
 import com.dml.shisanshui.player.action.ChupaiPaixingSolutionFilter;
 import com.dml.shisanshui.position.Position;
@@ -27,11 +29,16 @@ public class ShisanshuiPlayer {
 	/**
 	 * 玩家出牌方案
 	 */
-	private Map<String, PaixingSolution> chupaiSolutionCandidates = new HashMap<>();
+	private Map<String, Dao> chupaiSolutionCandidates = new HashMap<>();
 	/**
 	 * 玩家出牌提示
 	 */
 	private List<PaixingSolution> chupaiSolutionForTips = new ArrayList<>();
+
+	/**
+	 * 是否一条龙
+	 */
+	private boolean yitiaolong;
 
 	/**
 	 * 最终出牌
@@ -46,9 +53,44 @@ public class ShisanshuiPlayer {
 		return chupaiSolution != null;
 	}
 
-	public PaixingSolution chupai(String paixingIndex) throws Exception {
-		PaixingSolution solution = chupaiSolutionCandidates.get(paixingIndex);
-		if (solution == null) {
+	public PaixingSolution chupai(String toudaoIndex, String zhongdaoIndex, String weidaoIndex,
+			DaoComparator daoComparator) throws Exception {
+		Dao toudao = chupaiSolutionCandidates.get(toudaoIndex);
+		Dao zhongdao = chupaiSolutionCandidates.get(zhongdaoIndex);
+		Dao weidao = chupaiSolutionCandidates.get(weidaoIndex);
+		PaixingSolution solution = new PaixingSolution();
+		solution.setToudao(toudao);
+		solution.setZhongdao(zhongdao);
+		solution.setWeidao(weidao);
+		if (toudao == null || zhongdao == null || weidao == null) {
+			throw new ChupaiException();
+		}
+		// if (daoComparator.compare(toudao, zhongdao) > 0) {
+		// throw new ToudaoDayuZhongdaoException();
+		// }
+		// if (daoComparator.compare(zhongdao, weidao) > 0) {
+		// throw new ZhongdaoDayuWeidaoException();
+		// }
+		Map<Integer, PukePai> allPai = new HashMap<>();
+		for (PukePai pukePai : toudao.getPukePaiList()) {
+			if (!allShoupai.containsKey(pukePai.getId())) {
+				throw new ChupaiException();
+			}
+			allPai.put(pukePai.getId(), pukePai);
+		}
+		for (PukePai pukePai : zhongdao.getPukePaiList()) {
+			if (!allShoupai.containsKey(pukePai.getId())) {
+				throw new ChupaiException();
+			}
+			allPai.put(pukePai.getId(), pukePai);
+		}
+		for (PukePai pukePai : weidao.getPukePaiList()) {
+			if (!allShoupai.containsKey(pukePai.getId())) {
+				throw new ChupaiException();
+			}
+			allPai.put(pukePai.getId(), pukePai);
+		}
+		if (allPai.size() != allShoupai.size()) {
 			throw new ChupaiException();
 		}
 		chupaiSolution = solution;
@@ -57,9 +99,9 @@ public class ShisanshuiPlayer {
 		return chupaiSolution;
 	}
 
-	public void putChupaiSolutionCandidates(List<PaixingSolution> solutions) {
-		solutions.forEach((solution) -> {
-			chupaiSolutionCandidates.put(solution.getPaixingIndex(), solution);
+	public void putChupaiSolutionCandidates(List<Dao> daoList) {
+		daoList.forEach((dao) -> {
+			chupaiSolutionCandidates.put(dao.getIndex(), dao);
 		});
 	}
 
@@ -91,11 +133,11 @@ public class ShisanshuiPlayer {
 		this.allShoupai = allShoupai;
 	}
 
-	public Map<String, PaixingSolution> getChupaiSolutionCandidates() {
+	public Map<String, Dao> getChupaiSolutionCandidates() {
 		return chupaiSolutionCandidates;
 	}
 
-	public void setChupaiSolutionCandidates(Map<String, PaixingSolution> chupaiSolutionCandidates) {
+	public void setChupaiSolutionCandidates(Map<String, Dao> chupaiSolutionCandidates) {
 		this.chupaiSolutionCandidates = chupaiSolutionCandidates;
 	}
 
@@ -113,6 +155,14 @@ public class ShisanshuiPlayer {
 
 	public void setChupaiSolution(PaixingSolution chupaiSolution) {
 		this.chupaiSolution = chupaiSolution;
+	}
+
+	public boolean isYitiaolong() {
+		return yitiaolong;
+	}
+
+	public void setYitiaolong(boolean yitiaolong) {
+		this.yitiaolong = yitiaolong;
 	}
 
 }

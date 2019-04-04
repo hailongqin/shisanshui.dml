@@ -7,9 +7,10 @@ import java.util.Map;
 
 import com.dml.shisanshui.pai.PukePai;
 import com.dml.shisanshui.pai.paixing.PaixingSolution;
+import com.dml.shisanshui.pai.paixing.comparator.DaoComparator;
 import com.dml.shisanshui.player.PlayerNotFoundException;
 import com.dml.shisanshui.player.ShisanshuiPlayer;
-import com.dml.shisanshui.player.action.ChupaiPaixingSolutionCalculator;
+import com.dml.shisanshui.player.action.ChupaiDaoCalculator;
 import com.dml.shisanshui.player.action.ChupaiPaixingSolutionFilter;
 import com.dml.shisanshui.player.action.ShisanshuiChupaiAction;
 import com.dml.shisanshui.position.Position;
@@ -33,16 +34,23 @@ public class Pan {
 		return frame;
 	}
 
+	public List<String> sortedPlayerIds() {
+		return new ArrayList<>(playerIdPlayerMap.keySet());
+	}
+
+	public ShisanshuiPlayer findShisanshuiPlayerById(String playerId) {
+		return playerIdPlayerMap.get(playerId);
+	}
+
 	public void addPlayer(String playerId) {
 		ShisanshuiPlayer player = new ShisanshuiPlayer();
 		player.setId(playerId);
 		playerIdPlayerMap.put(playerId, player);
 	}
 
-	public void generateAllChupaiPaixingSolution(ChupaiPaixingSolutionCalculator chupaiPaixingSolutionCalculator) {
+	public void generateAllChupaiPaixingSolution(ChupaiDaoCalculator chupaiDaoCalculator) {
 		for (ShisanshuiPlayer player : playerIdPlayerMap.values()) {
-			player.putChupaiSolutionCandidates(
-					chupaiPaixingSolutionCalculator.generateAllPaixingSolution(player.getAllShoupai()));
+			player.putChupaiSolutionCandidates(chupaiDaoCalculator.generateAllPaixingSolution(player.getAllShoupai()));
 		}
 	}
 
@@ -61,12 +69,13 @@ public class Pan {
 		positionPlayerIdMap.put(position, playerId);
 	}
 
-	public ShisanshuiChupaiAction chupai(String playerId, String paixingIndex) throws Exception {
+	public ShisanshuiChupaiAction chupai(String playerId, String toudaoIndex, String zhongdaoIndex, String weidaoIndex,
+			DaoComparator daoComparator) throws Exception {
 		if (!playerIdPlayerMap.containsKey(playerId)) {
 			throw new PlayerNotFoundException();
 		}
 		ShisanshuiPlayer player = playerIdPlayerMap.get(playerId);
-		PaixingSolution solution = player.chupai(paixingIndex);
+		PaixingSolution solution = player.chupai(toudaoIndex, zhongdaoIndex, weidaoIndex, daoComparator);
 		ShisanshuiChupaiAction action = new ShisanshuiChupaiAction(playerId, solution);
 		return action;
 	}

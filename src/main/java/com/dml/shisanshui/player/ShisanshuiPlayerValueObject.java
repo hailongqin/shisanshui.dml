@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.dml.shisanshui.pai.PukePai;
+import com.dml.shisanshui.pai.paixing.Dao;
 import com.dml.shisanshui.pai.paixing.PaixingSolution;
 import com.dml.shisanshui.position.Position;
 
@@ -16,10 +17,12 @@ public class ShisanshuiPlayerValueObject {
 	 * 玩家手牌
 	 */
 	private Map<Integer, PukePai> allShoupai = new HashMap<>();
+
+	private int totalShoupai;
 	/**
 	 * 玩家出牌方案
 	 */
-	private Map<String, PaixingSolution> chupaiSolutionCandidates = new HashMap<>();
+	private Map<String, Dao> chupaiSolutionCandidates = new HashMap<>();
 	/**
 	 * 玩家出牌提示
 	 */
@@ -38,6 +41,7 @@ public class ShisanshuiPlayerValueObject {
 		id = player.getId();
 		position = player.getPosition();
 		allShoupai.putAll(player.getAllShoupai());
+		totalShoupai = allShoupai.size();
 		chupaiSolutionCandidates.putAll(player.getChupaiSolutionCandidates());
 		chupaiSolutionForTips.addAll(player.getChupaiSolutionForTips());
 		chupaiSolution = player.getChupaiSolution();
@@ -67,11 +71,11 @@ public class ShisanshuiPlayerValueObject {
 		this.allShoupai = allShoupai;
 	}
 
-	public Map<String, PaixingSolution> getChupaiSolutionCandidates() {
+	public Map<String, Dao> getChupaiSolutionCandidates() {
 		return chupaiSolutionCandidates;
 	}
 
-	public void setChupaiSolutionCandidates(Map<String, PaixingSolution> chupaiSolutionCandidates) {
+	public void setChupaiSolutionCandidates(Map<String, Dao> chupaiSolutionCandidates) {
 		this.chupaiSolutionCandidates = chupaiSolutionCandidates;
 	}
 
@@ -89,6 +93,14 @@ public class ShisanshuiPlayerValueObject {
 
 	public void setChupaiSolution(PaixingSolution chupaiSolution) {
 		this.chupaiSolution = chupaiSolution;
+	}
+
+	public int getTotalShoupai() {
+		return totalShoupai;
+	}
+
+	public void setTotalShoupai(int totalShoupai) {
+		this.totalShoupai = totalShoupai;
 	}
 
 }
