@@ -36,11 +36,6 @@ public class ShisanshuiPlayer {
 	private List<PaixingSolution> chupaiSolutionForTips = new ArrayList<>();
 
 	/**
-	 * 是否一条龙
-	 */
-	private boolean yitiaolong;
-
-	/**
 	 * 最终出牌
 	 */
 	private PaixingSolution chupaiSolution;
@@ -155,14 +150,6 @@ public class ShisanshuiPlayer {
 
 	public void setChupaiSolution(PaixingSolution chupaiSolution) {
 		this.chupaiSolution = chupaiSolution;
-	}
-
-	public boolean isYitiaolong() {
-		return yitiaolong;
-	}
-
-	public void setYitiaolong(boolean yitiaolong) {
-		this.yitiaolong = yitiaolong;
 	}
 
 }
