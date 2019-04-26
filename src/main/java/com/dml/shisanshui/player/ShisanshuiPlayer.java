@@ -11,6 +11,8 @@ import com.dml.shisanshui.pai.paixing.PaixingSolution;
 import com.dml.shisanshui.pai.paixing.comparator.DaoComparator;
 import com.dml.shisanshui.player.action.ChupaiException;
 import com.dml.shisanshui.player.action.ChupaiPaixingSolutionFilter;
+import com.dml.shisanshui.player.action.ToudaoDayuZhongdaoException;
+import com.dml.shisanshui.player.action.ZhongdaoDayuWeidaoException;
 import com.dml.shisanshui.position.Position;
 
 public class ShisanshuiPlayer {
@@ -60,12 +62,12 @@ public class ShisanshuiPlayer {
 		if (toudao == null || zhongdao == null || weidao == null) {
 			throw new ChupaiException();
 		}
-		// if (daoComparator.compare(toudao, zhongdao) > 0) {
-		// throw new ToudaoDayuZhongdaoException();
-		// }
-		// if (daoComparator.compare(zhongdao, weidao) > 0) {
-		// throw new ZhongdaoDayuWeidaoException();
-		// }
+		if (daoComparator.compare(toudao, zhongdao) > 0) {
+			throw new ToudaoDayuZhongdaoException();
+		}
+		if (daoComparator.compare(zhongdao, weidao) > 0) {
+			throw new ZhongdaoDayuWeidaoException();
+		}
 		Map<Integer, PukePai> allPai = new HashMap<>();
 		for (PukePai pukePai : toudao.getPukePaiList()) {
 			if (!allShoupai.containsKey(pukePai.getId())) {
@@ -101,7 +103,8 @@ public class ShisanshuiPlayer {
 	}
 
 	public void generateChupaiSolutionForTips(ChupaiPaixingSolutionFilter chupaiPaixingSolutionFilter) {
-		chupaiSolutionForTips = chupaiPaixingSolutionFilter.filter(new ArrayList<>(chupaiSolutionCandidates.values()));
+		chupaiSolutionForTips = chupaiPaixingSolutionFilter.filter(allShoupai,
+				new ArrayList<>(chupaiSolutionCandidates.values()));
 	}
 
 	public String getId() {
