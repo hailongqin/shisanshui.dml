@@ -14,6 +14,7 @@ import com.dml.shisanshui.player.action.ChupaiPaixingSolutionFilter;
 import com.dml.shisanshui.player.action.ToudaoDayuZhongdaoException;
 import com.dml.shisanshui.player.action.ZhongdaoDayuWeidaoException;
 import com.dml.shisanshui.position.Position;
+import com.dml.shisanshui.preparedapai.lipai.ShoupaiSortStrategy;
 
 public class ShisanshuiPlayer {
 	/**
@@ -28,6 +29,10 @@ public class ShisanshuiPlayer {
 	 * 玩家手牌
 	 */
 	private Map<Integer, PukePai> allShoupai = new HashMap<>();
+	/**
+	 * 可以有多种理牌方案
+	 */
+	private List<List<Integer>> shoupaiIdListForSortList = new ArrayList<>();
 	/**
 	 * 玩家出牌方案
 	 */
@@ -48,6 +53,10 @@ public class ShisanshuiPlayer {
 
 	public boolean chuwanpai() {
 		return chupaiSolution != null;
+	}
+
+	public Dao findDaoByIndex(String index) {
+		return chupaiSolutionCandidates.get(index);
 	}
 
 	public PaixingSolution chupai(String toudaoIndex, String zhongdaoIndex, String weidaoIndex,
@@ -107,6 +116,10 @@ public class ShisanshuiPlayer {
 				new ArrayList<>(chupaiSolutionCandidates.values()));
 	}
 
+	public void lipai(ShoupaiSortStrategy shoupaiSortStrategy) {
+		shoupaiIdListForSortList = shoupaiSortStrategy.sortShoupai(allShoupai);
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -153,6 +166,14 @@ public class ShisanshuiPlayer {
 
 	public void setChupaiSolution(PaixingSolution chupaiSolution) {
 		this.chupaiSolution = chupaiSolution;
+	}
+
+	public List<List<Integer>> getShoupaiIdListForSortList() {
+		return shoupaiIdListForSortList;
+	}
+
+	public void setShoupaiIdListForSortList(List<List<Integer>> shoupaiIdListForSortList) {
+		this.shoupaiIdListForSortList = shoupaiIdListForSortList;
 	}
 
 }

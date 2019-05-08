@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.dml.shisanshui.gameprocess.CurrentPanFinishiDeterminer;
 import com.dml.shisanshui.gameprocess.JuFinishiDeterminer;
+import com.dml.shisanshui.pai.paixing.Dao;
 import com.dml.shisanshui.pai.paixing.comparator.DaoComparator;
 import com.dml.shisanshui.pan.CurrentPanResultBuilder;
 import com.dml.shisanshui.pan.Pan;
@@ -15,6 +16,7 @@ import com.dml.shisanshui.player.action.ChupaiPaixingSolutionFilter;
 import com.dml.shisanshui.player.action.ShisanshuiChupaiAction;
 import com.dml.shisanshui.preparedapai.avaliablepai.AvaliablePaiFiller;
 import com.dml.shisanshui.preparedapai.fapai.FapaiStrategy;
+import com.dml.shisanshui.preparedapai.lipai.ShoupaiSortStrategy;
 import com.dml.shisanshui.preparedapai.lluanpai.LuanpaiStrategy;
 import com.dml.shisanshui.preparedapai.zuowei.ZuoweiDeterminer;
 
@@ -28,6 +30,7 @@ public class Ju {
 
 	private ZuoweiDeterminer zuoweiDeterminer;
 	private AvaliablePaiFiller avaliablePaiFiller;
+	private ShoupaiSortStrategy shoupaiSortStrategy;
 	private LuanpaiStrategy luanpaiStrategyForFirstPan;
 	private LuanpaiStrategy luanpaiStrategyForNextPan;
 	private FapaiStrategy fapaiStrategyForFirstPan;
@@ -41,6 +44,10 @@ public class Ju {
 	private CurrentPanResultBuilder currentPanResultBuilder;
 	private JuResultBuilder juResultBuilder;
 
+	public Dao findDaoByPlayerIdAndIndex(String playerId,String index) throws Exception {
+		return currentPan.findDaoByPlayerIdAndIndex(playerId, index);
+	}
+	
 	public PanActionFrame chupai(String playerId, String toudaoIndex, String zhongdaoIndex, String weidaoIndex,
 			long actionTime) throws Exception {
 		ShisanshuiChupaiAction action = currentPan.chupai(playerId, toudaoIndex, zhongdaoIndex, weidaoIndex,
@@ -63,12 +70,13 @@ public class Ju {
 		currentPan = new Pan();
 		currentPan.setNo(1);
 		allPlayerIds.forEach((pid) -> currentPan.addPlayer(pid));
-
+		zuoweiDeterminer.determineZuowei(this);
 		avaliablePaiFiller.fillAvaliablePai(this);
 
-		// 先乱牌，再发牌
+		// 先乱牌，发牌，再理牌
 		luanpaiStrategyForFirstPan.luanpai(this);
 		fapaiStrategyForFirstPan.fapai(this);
+		currentPan.getPlayerIdPlayerMap().values().forEach((player) -> player.lipai(shoupaiSortStrategy));
 		// 生成所有合理的出牌方案
 		currentPan.generateAllChupaiPaixingSolution(chupaiDaoCalculator);
 		// 出牌提示
@@ -82,12 +90,13 @@ public class Ju {
 		PanResult latestFinishedPanResult = findLatestFinishedPanResult();
 		List<String> allPlayerIds = latestFinishedPanResult.allPlayerIds();
 		allPlayerIds.forEach((pid) -> currentPan.addPlayer(pid));
-
+		zuoweiDeterminer.determineZuowei(this);
 		avaliablePaiFiller.fillAvaliablePai(this);
 
-		// 先乱牌，再发牌，再理牌，再组队
+		// 先乱牌，再发牌，再理牌
 		luanpaiStrategyForNextPan.luanpai(this);
 		fapaiStrategyForNextPan.fapai(this);
+		currentPan.getPlayerIdPlayerMap().values().forEach((player) -> player.lipai(shoupaiSortStrategy));
 		// 生成所有合理的出牌方案
 		currentPan.generateAllChupaiPaixingSolution(chupaiDaoCalculator);
 		// 出牌提示
@@ -237,6 +246,14 @@ public class Ju {
 
 	public void setDaoComparator(DaoComparator daoComparator) {
 		this.daoComparator = daoComparator;
+	}
+
+	public ShoupaiSortStrategy getShoupaiSortStrategy() {
+		return shoupaiSortStrategy;
+	}
+
+	public void setShoupaiSortStrategy(ShoupaiSortStrategy shoupaiSortStrategy) {
+		this.shoupaiSortStrategy = shoupaiSortStrategy;
 	}
 
 }

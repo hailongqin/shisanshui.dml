@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.dml.shisanshui.pai.PukePai;
+import com.dml.shisanshui.pai.paixing.Dao;
 import com.dml.shisanshui.pai.paixing.PaixingSolution;
 import com.dml.shisanshui.pai.paixing.comparator.DaoComparator;
 import com.dml.shisanshui.player.PlayerNotFoundException;
@@ -67,6 +68,14 @@ public class Pan {
 		ShisanshuiPlayer player = playerIdPlayerMap.get(playerId);
 		player.setPosition(position);
 		positionPlayerIdMap.put(position, playerId);
+	}
+
+	public Dao findDaoByPlayerIdAndIndex(String playerId, String index) throws Exception {
+		if (!playerIdPlayerMap.containsKey(playerId)) {
+			throw new PlayerNotFoundException();
+		}
+		ShisanshuiPlayer player = playerIdPlayerMap.get(playerId);
+		return player.findDaoByIndex(index);
 	}
 
 	public ShisanshuiChupaiAction chupai(String playerId, String toudaoIndex, String zhongdaoIndex, String weidaoIndex,
