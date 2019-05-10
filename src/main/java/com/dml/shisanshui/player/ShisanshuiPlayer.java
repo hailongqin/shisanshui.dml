@@ -71,10 +71,10 @@ public class ShisanshuiPlayer {
 		if (toudao == null || zhongdao == null || weidao == null) {
 			throw new ChupaiException();
 		}
-		if (daoComparator.compare(toudao, zhongdao) > 0) {
+		if (daoComparator.compare(toudao, zhongdao) >= 0) {
 			throw new ToudaoDayuZhongdaoException();
 		}
-		if (daoComparator.compare(zhongdao, weidao) > 0) {
+		if (daoComparator.compare(zhongdao, weidao) >= 0) {
 			throw new ZhongdaoDayuWeidaoException();
 		}
 		Map<Integer, PukePai> allPai = new HashMap<>();

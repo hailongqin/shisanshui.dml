@@ -21,45 +21,41 @@ public class ShisanshuiPlayerValueObject {
 	private List<List<Integer>> shoupaiIdListForSortList;
 	private int totalShoupai;
 	/**
-	 * 玩家乌龙出牌方案
-	 */
-	private List<Dao> wulongCandidates = new ArrayList<>();
-	/**
 	 * 玩家对子出牌方案
 	 */
-	private List<Dao> duiziCandidates = new ArrayList<>();
+	private List<List<PukePai>> duiziCandidates = new ArrayList<>();
 	/**
 	 * 玩家两对出牌方案
 	 */
-	private List<Dao> liangduiCandidates = new ArrayList<>();
+	private List<List<PukePai>> liangduiCandidates = new ArrayList<>();
 	/**
 	 * 玩家三条出牌方案
 	 */
-	private List<Dao> santiaoCandidates = new ArrayList<>();
+	private List<List<PukePai>> santiaoCandidates = new ArrayList<>();
 	/**
 	 * 玩家顺子出牌方案
 	 */
-	private List<Dao> shunziCandidates = new ArrayList<>();
+	private List<List<PukePai>> shunziCandidates = new ArrayList<>();
 	/**
 	 * 玩家同花出牌方案
 	 */
-	private List<Dao> tonghuaCandidates = new ArrayList<>();
+	private List<List<PukePai>> tonghuaCandidates = new ArrayList<>();
 	/**
 	 * 玩家葫芦出牌方案
 	 */
-	private List<Dao> huluCandidates = new ArrayList<>();
+	private List<List<PukePai>> huluCandidates = new ArrayList<>();
 	/**
 	 * 玩家铁支出牌方案
 	 */
-	private List<Dao> tiezhiCandidates = new ArrayList<>();
+	private List<List<PukePai>> tiezhiCandidates = new ArrayList<>();
 	/**
 	 * 玩家同花顺出牌方案
 	 */
-	private List<Dao> tonghuashunCandidates = new ArrayList<>();
+	private List<List<PukePai>> tonghuashunCandidates = new ArrayList<>();
 	/**
 	 * 玩家五枚出牌方案
 	 */
-	private List<Dao> wumeiCandidates = new ArrayList<>();
+	private List<List<PukePai>> wumeiCandidates = new ArrayList<>();
 	/**
 	 * 玩家出牌提示
 	 */
@@ -80,62 +76,74 @@ public class ShisanshuiPlayerValueObject {
 		allShoupai.putAll(player.getAllShoupai());
 		shoupaiIdListForSortList = new ArrayList<>(player.getShoupaiIdListForSortList());
 		totalShoupai = allShoupai.size();
+		int[] dianshuArray = new int[15];
+		for (PukePai pukePai : allShoupai.values()) {
+			dianshuArray[pukePai.getPaiMian().dianShu().ordinal()]++;
+		}
+		for (int i = 0; i < dianshuArray.length; i++) {
+			if (dianshuArray[i] == 2) {
+				List<PukePai> duizi = new ArrayList<>();
+				for (PukePai pukePai : allShoupai.values()) {
+					if (pukePai.getPaiMian().dianShu().ordinal() == i) {
+						duizi.add(pukePai);
+					}
+				}
+				duiziCandidates.add(duizi);
+			}
+			if (dianshuArray[i] == 3) {
+				List<PukePai> santiao = new ArrayList<>();
+				for (PukePai pukePai : allShoupai.values()) {
+					if (pukePai.getPaiMian().dianShu().ordinal() == i) {
+						santiao.add(pukePai);
+					}
+				}
+				santiaoCandidates.add(santiao);
+			}
+		}
+		for (int m = 0; m < duiziCandidates.size() - 1; m++) {
+			for (int n = m + 1; n < duiziCandidates.size(); n++) {
+				List<PukePai> liangdui = new ArrayList<>();
+				liangdui.addAll(duiziCandidates.get(m));
+				liangdui.addAll(duiziCandidates.get(n));
+				liangduiCandidates.add(liangdui);
+			}
+		}
 		for (Dao dao : player.getChupaiSolutionCandidates().values()) {
 			List<PukePai> pukePaiList = dao.getPukePaiList();
 			if (pukePaiList.size() != 5) {
 				continue;
 			}
 			Paixing paixing = dao.getPaixing();
-			if (Paixing.wulong.equals(paixing)) {
-				if (wulongCandidates.size() > 10) {
-					continue;
-				}
-				wulongCandidates.add(dao);
-			} else if (Paixing.duizi.equals(paixing)) {
-				if (duiziCandidates.size() > 10) {
-					continue;
-				}
-				duiziCandidates.add(dao);
-			} else if (Paixing.liangdui.equals(paixing)) {
-				if (liangduiCandidates.size() > 10) {
-					continue;
-				}
-				liangduiCandidates.add(dao);
-			} else if (Paixing.santiao.equals(paixing)) {
-				if (santiaoCandidates.size() > 10) {
-					continue;
-				}
-				santiaoCandidates.add(dao);
-			} else if (Paixing.shunzi.equals(paixing)) {
+			if (Paixing.shunzi.equals(paixing)) {
 				if (shunziCandidates.size() > 10) {
 					continue;
 				}
-				shunziCandidates.add(dao);
+				shunziCandidates.add(dao.getPukePaiList());
 			} else if (Paixing.tonghua.equals(paixing)) {
 				if (tonghuaCandidates.size() > 10) {
 					continue;
 				}
-				tonghuaCandidates.add(dao);
+				tonghuaCandidates.add(dao.getPukePaiList());
 			} else if (Paixing.hulu.equals(paixing)) {
 				if (huluCandidates.size() > 10) {
 					continue;
 				}
-				huluCandidates.add(dao);
+				huluCandidates.add(dao.getPukePaiList());
 			} else if (Paixing.tiezhi.equals(paixing)) {
 				if (tiezhiCandidates.size() > 10) {
 					continue;
 				}
-				tiezhiCandidates.add(dao);
+				tiezhiCandidates.add(dao.getPukePaiList());
 			} else if (Paixing.tonghuashun.equals(paixing)) {
 				if (tonghuashunCandidates.size() > 10) {
 					continue;
 				}
-				tonghuashunCandidates.add(dao);
+				tonghuashunCandidates.add(dao.getPukePaiList());
 			} else if (Paixing.wumei.equals(paixing)) {
 				if (wumeiCandidates.size() > 10) {
 					continue;
 				}
-				wumeiCandidates.add(dao);
+				wumeiCandidates.add(dao.getPukePaiList());
 			}
 		}
 		chupaiSolutionForTips.addAll(player.getChupaiSolutionForTips());
@@ -174,83 +182,75 @@ public class ShisanshuiPlayerValueObject {
 		this.allShoupai = allShoupai;
 	}
 
-	public List<Dao> getWulongCandidates() {
-		return wulongCandidates;
-	}
-
-	public void setWulongCandidates(List<Dao> wulongCandidates) {
-		this.wulongCandidates = wulongCandidates;
-	}
-
-	public List<Dao> getDuiziCandidates() {
+	public List<List<PukePai>> getDuiziCandidates() {
 		return duiziCandidates;
 	}
 
-	public void setDuiziCandidates(List<Dao> duiziCandidates) {
+	public void setDuiziCandidates(List<List<PukePai>> duiziCandidates) {
 		this.duiziCandidates = duiziCandidates;
 	}
 
-	public List<Dao> getLiangduiCandidates() {
+	public List<List<PukePai>> getLiangduiCandidates() {
 		return liangduiCandidates;
 	}
 
-	public void setLiangduiCandidates(List<Dao> liangduiCandidates) {
+	public void setLiangduiCandidates(List<List<PukePai>> liangduiCandidates) {
 		this.liangduiCandidates = liangduiCandidates;
 	}
 
-	public List<Dao> getSantiaoCandidates() {
+	public List<List<PukePai>> getSantiaoCandidates() {
 		return santiaoCandidates;
 	}
 
-	public void setSantiaoCandidates(List<Dao> santiaoCandidates) {
+	public void setSantiaoCandidates(List<List<PukePai>> santiaoCandidates) {
 		this.santiaoCandidates = santiaoCandidates;
 	}
 
-	public List<Dao> getShunziCandidates() {
+	public List<List<PukePai>> getShunziCandidates() {
 		return shunziCandidates;
 	}
 
-	public void setShunziCandidates(List<Dao> shunziCandidates) {
+	public void setShunziCandidates(List<List<PukePai>> shunziCandidates) {
 		this.shunziCandidates = shunziCandidates;
 	}
 
-	public List<Dao> getTonghuaCandidates() {
+	public List<List<PukePai>> getTonghuaCandidates() {
 		return tonghuaCandidates;
 	}
 
-	public void setTonghuaCandidates(List<Dao> tonghuaCandidates) {
+	public void setTonghuaCandidates(List<List<PukePai>> tonghuaCandidates) {
 		this.tonghuaCandidates = tonghuaCandidates;
 	}
 
-	public List<Dao> getHuluCandidates() {
+	public List<List<PukePai>> getHuluCandidates() {
 		return huluCandidates;
 	}
 
-	public void setHuluCandidates(List<Dao> huluCandidates) {
+	public void setHuluCandidates(List<List<PukePai>> huluCandidates) {
 		this.huluCandidates = huluCandidates;
 	}
 
-	public List<Dao> getTiezhiCandidates() {
+	public List<List<PukePai>> getTiezhiCandidates() {
 		return tiezhiCandidates;
 	}
 
-	public void setTiezhiCandidates(List<Dao> tiezhiCandidates) {
+	public void setTiezhiCandidates(List<List<PukePai>> tiezhiCandidates) {
 		this.tiezhiCandidates = tiezhiCandidates;
 	}
 
-	public List<Dao> getTonghuashunCandidates() {
+	public List<List<PukePai>> getTonghuashunCandidates() {
 		return tonghuashunCandidates;
 	}
 
-	public void setTonghuashunCandidates(List<Dao> tonghuashunCandidates) {
+	public void setTonghuashunCandidates(List<List<PukePai>> tonghuashunCandidates) {
 		this.tonghuashunCandidates = tonghuashunCandidates;
 	}
 
-	public List<Dao> getWumeiCandidates() {
+	public List<List<PukePai>> getWumeiCandidates() {
 		return wumeiCandidates;
 	}
 
-	public void setWumeiCandidates(List<Dao> wumeiCandidates) {
+	public void setWumeiCandidates(List<List<PukePai>> wumeiCandidates) {
 		this.wumeiCandidates = wumeiCandidates;
 	}
 
